@@ -1,4 +1,4 @@
-name: IPQ60XX-6.12-WIFI-snyp
+name: IPQ60XX-6.12-WIFI-snyp-all
 
 on:
   workflow_dispatch:
