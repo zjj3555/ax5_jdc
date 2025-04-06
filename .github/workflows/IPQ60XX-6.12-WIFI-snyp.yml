@@ -108,9 +108,9 @@ jobs:
 
     - name: run test.sh(运行diy脚本)
       run: |
-        cp $GITHUB_WORKSPACE/DIY_SCRIPT $OPENWRT_PATH/DIY_SCRIPT 
-        chmod +x $OPENWRT_PATH/DIY_SCRIPT
-        cd $OPENWRT_PATH && ./DIY_SCRIPT
+        cp $GITHUB_WORKSPACE/test.sh $OPENWRT_PATH/test.sh 
+        chmod +x $OPENWRT_PATH/test.sh
+        cd $OPENWRT_PATH && ./test.sh
         
     - name: Download DL Package(下载DL软件包)
       run: |
