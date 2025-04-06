@@ -10,6 +10,7 @@ function git_sparse_clone() {
 
 #添加额外插件
 git clone --depth=1 https://github.com/mchome/luci-app-dogcom.git package/luci-app-dogcom
+git clone --depth=1 https://github.com/mchome/openwrt-dogcom.git package/dogcom
 
 
 # 科学上网插件
