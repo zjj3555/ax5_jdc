@@ -90,6 +90,12 @@ jobs:
         ccache: false
         mixkey: ${{ env.SOURCE_REPO }}-${{ env.REPO_BRANCH }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
         prefix: ${{ env.OPENWRT_PATH }}
+        
+    - name: run test.sh(运行diy脚本)
+      run: |
+        cp $GITHUB_WORKSPACE/test.sh $OPENWRT_PATH/test.sh 
+        chmod +x $OPENWRT_PATH/test.sh
+        cd $OPENWRT_PATH && ./test.sh
     
     - name: Install Feeds(安装feeds)
       run: |
@@ -106,11 +112,7 @@ jobs:
         [ -e files ] && mv files $OPENWRT_PATH/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRT_PATH/.config
 
-    - name: run test.sh(运行diy脚本)
-      run: |
-        cp $GITHUB_WORKSPACE/test.sh $OPENWRT_PATH/test.sh 
-        chmod +x $OPENWRT_PATH/test.sh
-        cd $OPENWRT_PATH && ./test.sh
+    
         
     - name: Download DL Package(下载DL软件包)
       run: |
