@@ -106,11 +106,11 @@ jobs:
         [ -e files ] && mv files $OPENWRT_PATH/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRT_PATH/.config
 
-    - name: run diy-script.sh(运行diy脚本)
+    - name: run test.sh(运行diy脚本)
       run: |
-        cp $GITHUB_WORKSPACE/diy-script.sh $OPENWRT_PATH/diy-script.sh 
-        chmod +x $OPENWRT_PATH/diy-script.sh 
-        cd $OPENWRT_PATH && ./diy-script.sh
+        cp $GITHUB_WORKSPACE/DIY_SCRIPT $OPENWRT_PATH/DIY_SCRIPT 
+        chmod +x $OPENWRT_PATH/DIY_SCRIPT
+        cd $OPENWRT_PATH && ./DIY_SCRIPT
         
     - name: Download DL Package(下载DL软件包)
       run: |
