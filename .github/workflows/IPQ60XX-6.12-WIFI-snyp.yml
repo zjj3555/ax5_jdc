@@ -53,9 +53,9 @@ jobs:
     - name: Combine Disks(合并磁盘)
       uses: easimon/maximize-build-space@master
       with:
-        swap-size-mb: 1024
-        temp-reserve-mb: 100
-        root-reserve-mb: 1024
+        swap-size-mb: 2048  # 提升 Swap 到 2GB
+        temp-reserve-mb: 200
+        root-reserve-mb: 2048  # 根目录保留 2GB
 
     - name: Checkout
       uses: actions/checkout@main
@@ -96,16 +96,13 @@ jobs:
     - name: Install Feeds(安装feeds)
       run: |
         cd $OPENWRT_PATH
+        # 在 feeds.conf 中添加自定义源
+        echo "src-git custom https://github.com/sbwml/openwrt_pkgs.git" >> feeds.conf.default
         ./scripts/feeds update -a
-        # 添加 dogcom 源码
-        git clone --depth 1 https://github.com/mchome/openwrt-dogcom package/new/dogcom
-        # 处理第三方包
-        git clone --depth 1 https://github.com/sbwml/openwrt_pkgs.git package/new/custom
-        mv package/new/custom/luci-app-netspeedtest package/new
-        mv package/new/custom/speedtest-cli package/new
-        rm -rf package/new/custom
-        # 强制注册 dogcom 到 feeds 并安装
-        ./scripts/feeds install -a -p custom dogcom  
+        # 克隆 dogcom 到正确位置
+        git clone --depth 1 https://github.com/mchome/openwrt-dogcom package/network/services/dogcom
+        # 安装所有包（包括自定义源）
+        ./scripts/feeds install -a
   
     - name: Load Custom Configuration(加载自定义配置)
       run: |
@@ -181,3 +178,9 @@ jobs:
           - 固件内核版本：${{ env.VERSION_KERNEL }}
           - 固件编译前最后一次➦[主源码](${{ env.REPO_URL }})更新记录
           - ${{ env.VERSION_INFO }}
+    - name: Upload Logs
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-logs
+        path: ${{ env.OPENWRT_PATH }}/logs
