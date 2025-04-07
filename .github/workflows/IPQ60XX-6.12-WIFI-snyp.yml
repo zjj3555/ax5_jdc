@@ -97,13 +97,15 @@ jobs:
       run: |
         cd $OPENWRT_PATH
         ./scripts/feeds update -a
-        # 添加dogcom源码仓库
+        # 添加 dogcom 源码
         git clone --depth 1 https://github.com/mchome/openwrt-dogcom package/new/dogcom
+        # 处理第三方包
         git clone --depth 1 https://github.com/sbwml/openwrt_pkgs.git package/new/custom
-        mv package/new/custom/luci-app-netspeedtest  package/new
+        mv package/new/custom/luci-app-netspeedtest package/new
         mv package/new/custom/speedtest-cli package/new
         rm -rf package/new/custom
-        ./scripts/feeds install -a
+        # 强制注册 dogcom 到 feeds 并安装
+        ./scripts/feeds install -a -p custom dogcom  
   
     - name: Load Custom Configuration(加载自定义配置)
       run: |
