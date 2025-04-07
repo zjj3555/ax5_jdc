@@ -9,7 +9,7 @@ env:
   REPO_URL: https://github.com/LiBwrt/openwrt-6.x.git
   REPO_BRANCH: kernel-6.12
   CONFIG_FILE: configs/ipq60xx-6.12-wifi.config
-  DIY_SCRIPT: test.sh
+  DIY_SCRIPT: diy-script.sh
   CLASH_KERNEL: amd64
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
@@ -76,6 +76,8 @@ jobs:
         cp $CONFIG_FILE $OPENWRT_PATH/.config
         cd $OPENWRT_PATH
         make defconfig > /dev/null 2>&1
+        # 追加dogcom编译选项
+        echo "CONFIG_PACKAGE_dogcom=y" >> .config
         SOURCE_REPO="$(echo $REPO_URL | awk -F '/' '{print $(NF)}')"
         echo "SOURCE_REPO=$SOURCE_REPO" >> $GITHUB_ENV
         DEVICE_TARGET=$(cat .config | grep CONFIG_TARGET_BOARD | awk -F '"' '{print $2}')
@@ -91,16 +93,12 @@ jobs:
         mixkey: ${{ env.SOURCE_REPO }}-${{ env.REPO_BRANCH }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
         prefix: ${{ env.OPENWRT_PATH }}
     
-    - name: run test.sh(运行diy脚本)
-      run: |
-        cp $GITHUB_WORKSPACE/test.sh $OPENWRT_PATH/test.sh 
-        chmod +x $OPENWRT_PATH/test.sh
-        cd $OPENWRT_PATH && ./test.sh
-        
     - name: Install Feeds(安装feeds)
       run: |
         cd $OPENWRT_PATH
         ./scripts/feeds update -a
+        # 添加dogcom源码仓库
+        git clone --depth 1 https://github.com/mchome/openwrt-dogcom package/new/dogcom
         git clone --depth 1 https://github.com/sbwml/openwrt_pkgs.git package/new/custom
         mv package/new/custom/luci-app-netspeedtest  package/new
         mv package/new/custom/speedtest-cli package/new
@@ -111,7 +109,7 @@ jobs:
       run: |
         [ -e files ] && mv files $OPENWRT_PATH/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRT_PATH/.config
-        
+
     - name: Download DL Package(下载DL软件包)
       run: |
         cd $OPENWRT_PATH
@@ -119,7 +117,6 @@ jobs:
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
-        cp $GIT
 
     - name: Compile Firmware(开始编译固件)
       id: compile
