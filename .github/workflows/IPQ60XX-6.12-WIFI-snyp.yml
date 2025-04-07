@@ -178,9 +178,9 @@ jobs:
           - 固件内核版本：${{ env.VERSION_KERNEL }}
           - 固件编译前最后一次➦[主源码](${{ env.REPO_URL }})更新记录
           - ${{ env.VERSION_INFO }}
-    - name: Upload Logs
-      if: failure()
-      uses: actions/upload-artifact@v3
-      with:
-        name: build-logs
-        path: ${{ env.OPENWRT_PATH }}/logs
+      - name: Upload Logs
+        if: failure()
+        uses: actions/upload-artifact@v4  # 已更新到 v4
+        with:
+          name: build-logs
+          path: ${{ env.OPENWRT_PATH }}/logs
