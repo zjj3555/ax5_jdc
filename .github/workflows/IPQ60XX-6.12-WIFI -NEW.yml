@@ -1,5 +1,4 @@
-name: IPQ60XX-6.12-WIFI-new
-
+name: IPQ60XX-6.12-WIFI-NEW
 on:
   workflow_dispatch:
   schedule:
@@ -8,13 +7,13 @@ on:
 env:
   REPO_URL: https://github.com/LiBwrt/openwrt-6.x.git
   REPO_BRANCH: kernel-6.12
-  CONFIG_FILE: configs/ipq60xx-6.12-wifi.config
+  CONFIG_FILE: configs/ipq60xx-6.12-wifi-snyp-all.config
   DIY_SCRIPT: diy-script.sh
   CLASH_KERNEL: amd64
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   FIRMWARE_RELEASE: true
-  FIRMWARE_TAG: IPQ60XX-6.12-WIFI-new
+  FIRMWARE_TAG: IPQ60XX-6.12-WIFI-NEW
   TZ: Asia/Shanghai
 
 jobs:
@@ -76,10 +75,6 @@ jobs:
         cp $CONFIG_FILE $OPENWRT_PATH/.config
         cd $OPENWRT_PATH
         make defconfig > /dev/null 2>&1
-        # 强制启用Dogcom
-        echo "CONFIG_PACKAGE_dogcom=y" >> .config
-        echo "CONFIG_PACKAGE_libpcap=y" >> .config
-        echo "CONFIG_PACKAGE_libopenssl=y" >> .config
         SOURCE_REPO="$(echo $REPO_URL | awk -F '/' '{print $(NF)}')"
         echo "SOURCE_REPO=$SOURCE_REPO" >> $GITHUB_ENV
         DEVICE_TARGET=$(cat .config | grep CONFIG_TARGET_BOARD | awk -F '"' '{print $2}')
@@ -99,8 +94,6 @@ jobs:
       run: |
         cd $OPENWRT_PATH
         ./scripts/feeds update -a
-        # 添加Dogcom源码仓库
-        git clone --depth 1 https://github.com/mchome/openwrt-dogcom.git package/network/services/dogcom
         git clone --depth 1 https://github.com/sbwml/openwrt_pkgs.git package/new/custom
         mv package/new/custom/luci-app-netspeedtest  package/new
         mv package/new/custom/speedtest-cli package/new
