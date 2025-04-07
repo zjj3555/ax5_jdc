@@ -1,4 +1,4 @@
-name: IPQ60XX-6.12-WIFI-snyp-2
+name: IPQ60XX-6.12-WIFI-snyp
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ env:
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   FIRMWARE_RELEASE: true
-  FIRMWARE_TAG: IPQ60XX-6.12-WIFI-snyp-2
+  FIRMWARE_TAG: IPQ60XX-6.12-WIFI-snyp
   TZ: Asia/Shanghai
 
 jobs:
